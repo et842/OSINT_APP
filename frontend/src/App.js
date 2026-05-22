@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import './App.css';
 
-const API = 'http://127.0.0.1:5000/api';
+const API = 'https://osint-app-8c1i.onrender.com/api';
 
 const scoreColour = (score) => {
   if (score >= 75) return '#e74c3c';
