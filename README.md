@@ -2,6 +2,11 @@
 
 A self-hosted threat intelligence dashboard that aggregates indicators of compromise (IPs, domains, URLs, file hashes) from public OSINT feeds, scores them, and turns them into ready-to-deploy detection rules. Built with a Flask + SQLite backend and a React frontend.
 
+
+# My Website:
+https://osint-app-1-am7p.onrender.com/
+Note that some features may not work due to cost issues as discussed.
+
 ## Features
 
 - **Automated collection** from four threat feeds every 12 hours: URLhaus, AbuseIPDB, AlienVault OTX, VirusTotal.
