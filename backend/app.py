@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
-from database import get_connection
+from database import get_connection, init_db
 import json
 import re
 import requests
@@ -57,6 +57,10 @@ def init_keys_db():
     conn.close()
 
 init_keys_db()
+
+# Create the indicator tables on startup so the app works on a fresh
+# database (e.g. a hosted deploy where `python database.py` was never run).
+init_db()
 
 def save_user_key(session_id, service, api_key):
     encrypted = fernet.encrypt(api_key.encode()).decode()
