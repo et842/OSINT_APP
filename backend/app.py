@@ -1435,4 +1435,5 @@ from datetime import datetime
 
 if __name__ == "__main__":
     auto_collect_loop()
-    app.run(debug=True, port=5000)
+    # Bind 0.0.0.0 and the host-provided $PORT so the service is reachable.
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
