@@ -72,6 +72,18 @@ export default function App() {
   const [validatingKey, setValidatingKey] = useState('');
   const [savingKey, setSavingKey] = useState('');
 
+  // Responsive: switch to a single-column layout on small screens.
+  // Desktop styles are completely unchanged when isMobile is false.
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+  );
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  const s = makeStyles(isMobile);
+
   const api = axios.create({ baseURL: API, withCredentials: true });
 
   useEffect(() => {
@@ -267,7 +279,7 @@ export default function App() {
             Collect, analyse and respond to cyber threats from {Object.keys(stats?.by_source || {}).length + 9} intelligence sources
           </p>
           <button
-            style={{...s.keyBtn, position:'absolute', top:0, right:0}}
+            style={{...s.keyBtn, ...s.keyBtnPos}}
             onClick={() => setShowKeyModal(true)}
           >
             API Keys
@@ -1269,29 +1281,30 @@ export default function App() {
   );
 }
 
-const s = {
+const makeStyles = (isMobile) => ({
   page:      { background:'#0d1117', minHeight:'100vh', color:'#e6edf3', fontFamily:'-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' },
   loading:   { display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', color:'#888', fontSize:18 },
 
   // Header
-  header:      { background:'#161b22', borderBottom:'1px solid #30363d', padding:'20px 32px' },
-  headerTitle: { margin:0, fontSize:44, fontWeight:800, letterSpacing:'-0.5px' },
+  header:      { background:'#161b22', borderBottom:'1px solid #30363d', padding: isMobile ? '16px 14px' : '20px 32px' },
+  headerTitle: { margin:0, fontSize: isMobile ? 26 : 44, fontWeight:800, letterSpacing:'-0.5px' },
   headerSub:   { margin:'4px 0 0', color:'#8b949e', fontSize:13 },
   keyBtn:      { background:'#21262d', border:'1px solid #30363d', color:'#e6edf3', borderRadius:8, padding:'8px 16px', fontSize:13, cursor:'pointer', display:'flex', alignItems:'center', gap:8 },
   keyBadge:    { background:'#2ecc71', color:'#fff', borderRadius:10, padding:'1px 7px', fontSize:11, fontWeight:600 },
+  keyBtnPos:   isMobile ? { position:'static', margin:'12px auto 0' } : { position:'absolute', top:0, right:0 },
 
   // Stats bar
   statsBar:   { display:'flex', gap:0, marginTop:16, background:'#0d1117', borderRadius:8, border:'1px solid #30363d', overflow:'hidden', flexWrap:'wrap' },
-  statItem:   { padding:'10px 18px', display:'flex', flexDirection:'column', alignItems:'center', flex:1, minWidth:80 },
+  statItem:   { padding: isMobile ? '8px 10px' : '10px 18px', display:'flex', flexDirection:'column', alignItems:'center', flex:1, minWidth:80 },
   statNum:    { fontSize:20, fontWeight:700, color:'#58a6ff' },
   statLabel:  { fontSize:11, color:'#8b949e', marginTop:2, textTransform:'uppercase', letterSpacing:'0.03em' },
   statDivider:{ width:1, background:'#30363d', alignSelf:'stretch' },
 
   // Content area
-  content: { padding:'20px 32px' },
+  content: { padding: isMobile ? '16px 14px' : '20px 32px' },
 
   // Tool grid
-  toolGrid:   { display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))', gap:16, marginBottom:20 },
+  toolGrid:   { display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))', gap:16, marginBottom:20 },
   toolCard:   { background:'#161b22', border:'1px solid #30363d', borderTop:'3px solid #1f6feb', borderRadius:8, padding:20 },
   toolHeader: { display:'flex', gap:12, alignItems:'flex-start', marginBottom:12 },
   toolIcon:   { display:'flex', alignItems:'center', justifyContent:'center', width:36, height:36, borderRadius:8, color:'#fff', fontWeight:700, fontSize:14, flexShrink:0 },
@@ -1312,18 +1325,18 @@ const s = {
   sectionTitle:  { margin:0, fontSize:16, color:'#e6edf3', display:'flex', alignItems:'center' },
 
   // Live result cards
-  liveGrid:    { display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(320px, 1fr))', gap:10, marginBottom:10 },
+  liveGrid:    { display:'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap:10, marginBottom:10 },
   liveCard:    { background:'#0d1117', border:'1px solid #30363d', borderRadius:8, padding:'14px 16px' },
   lcHeader:    { display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 },
   lcTitle:     { fontSize:13, fontWeight:600, color:'#58a6ff' },
-  lcGrid:      { display:'grid', gridTemplateColumns:'1fr 1fr', gap:'4px 16px', fontSize:12 },
+  lcGrid:      { display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'4px 16px', fontSize:12 },
   lcLabel:     { color:'#8b949e' },
 
   // Result row
   resultRow: { display:'flex', gap:8, alignItems:'center', flexWrap:'wrap', padding:'8px 12px', background:'#0d1117', border:'1px solid #30363d', borderRadius:6, marginBottom:6 },
 
   // Charts
-  chartsRow: { display:'grid', gridTemplateColumns:'1fr 1fr 1.2fr', gap:16, marginBottom:20 },
+  chartsRow: { display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1.2fr', gap:16, marginBottom:20 },
   chartBox:  { background:'#161b22', border:'1px solid #30363d', borderRadius:8, padding:'14px 16px' },
   chartLabel:{ fontSize:12, color:'#8b949e', fontWeight:600, marginBottom:8, textTransform:'uppercase', letterSpacing:'0.04em' },
 
@@ -1341,7 +1354,7 @@ const s = {
 
   // Modals
   overlay:  { position:'fixed', top:0, left:0, right:0, bottom:0, background:'rgba(0,0,0,0.75)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000, padding:20 },
-  modal:    { background:'#161b22', border:'1px solid #30363d', borderRadius:12, padding:'24px 28px', maxWidth:560, width:'100%', maxHeight:'85vh', overflowY:'auto' },
+  modal:    { background:'#161b22', border:'1px solid #30363d', borderRadius:12, padding: isMobile ? '18px 16px' : '24px 28px', maxWidth:560, width:'100%', maxHeight:'85vh', overflowY:'auto' },
   closeBtn: { background:'none', border:'1px solid #30363d', color:'#8b949e', fontSize:18, cursor:'pointer', borderRadius:6, padding:'4px 10px', lineHeight:1 },
   keyRow:   { background:'#0d1117', border:'1px solid #30363d', borderRadius:8, padding:'14px 16px', marginBottom:10 },
-};
+});
